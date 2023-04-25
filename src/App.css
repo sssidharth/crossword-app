@@ -39,7 +39,7 @@
 
 
 .cellInput {
-  color: blue;
+  color: black;
   font-size: 30px;
   width: 70px;
   height: 70px;
@@ -58,6 +58,7 @@
 .cellInput:focus{
   color: transparent;
   text-shadow: 0px 0px 0px blue;
+  outline: none;
 }
 
 .container {
@@ -72,7 +73,6 @@
 
 .header {
   display: flex;
-  margin-bottom: 30px;
 }
 
 .heading-title {
@@ -157,4 +157,27 @@
   font-size: 1.2em;
   margin-bottom: 10px;
   min-height: 60px;
+}
+
+.Actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: 45px;
+  border-top: 1px solid #bfbfbf;
+  border-bottom: 1px solid #bfbfbf;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.pen-container {
+  display: flex;
+  align-items: center;
+  width: 45px;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.pen-container:hover {
+  background-color: #e6e6e6;
 }
