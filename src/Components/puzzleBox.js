@@ -1,7 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 
 function Puzzle(props) {
+
+    useEffect(()=> {
+        let cellstoChange = []      
+            let list = props.inputs;
+            for(let i = 0;i <list.length; i++) {
+                for(let j = 0; j<list[0].length; j++){ 
+                    if(list[i][j].value === ''){
+                        cellstoChange.push(`${i}${j}`) 
+                    }
+                }   
+            }
+        for(let i = 0; i<cellstoChange.length; i++) {
+            let el = document.getElementById(cellstoChange[i]);
+            if(el) el.style.color = props.mutedText ? '#959595' : 'black'          
+        }
+    },[props.mutedText])
     
     const handleClick = (e,position) => {
 
@@ -104,7 +120,11 @@ function Puzzle(props) {
             }
             if(found) break;
         }
-        if(value !==''){
+        if(value === '') {
+            let currentEl = document.getElementById(`${position[0]}${position[1]}`);
+            currentEl.style.color = props.mutedText ? '#959595' :'black'
+        }
+        if(value !=='' ){
         let current = id;
             current = current.split('')
             let row = Number(current[0]);
@@ -142,6 +162,7 @@ function Puzzle(props) {
             clone[Number(nextElNumber.split('')[0])][Number(nextElNumber.split('')[1])].selected = true;
             let nextEl = document.getElementById(nextElNumber);
             nextEl.focus();
+            nextEl.setSelectionRange(1,1)
         props.setHighlight({
             position: props.highlight.position,
             cell: highlightCell
@@ -165,8 +186,8 @@ function Puzzle(props) {
           <input type="text" id={`${position[0]}${position[1]}`} onClick={(e) => handleClick(e,position)}
           className="cellInput" maxLength={1} value={value} onChange={(e)=>handleChange(e, position)}
           placeholder={placeholderNumber ? `${placeholderNumber}` : null}
-          style={{background: selected ? '#ffda00' : !selected && background ? background : 'white'}}
-          >
+        //  onKeyDown={(e) => handleKeyDown(e,position)}
+          style={{background: selected ? '#ffda00' : !selected && background ? background : 'white' }}>
           </input>
         )
      }
@@ -183,7 +204,10 @@ function Puzzle(props) {
                     cellsToHighlight = [index1, props.highlight.cell]
                 }
                 return (index1 === 0 && index2 === 0) || (index2 === 4 && index1 === 4) ? <div key={index2}>{renderBox(true, '', 'black',[index1,index2])} </div>
-                : <div key={index2}>{renderBox(false, val2.value, val2.selected,[index1,index2], (cellsToHighlight[0] === index1 && cellsToHighlight[1] === index2 ? '#a7d8ff': null) )}</div>;
+                : <div key={index2}>{renderBox(false, val2.value, val2.selected,[index1,index2], 
+                 (cellsToHighlight[0] === index1 && cellsToHighlight[1] === index2 ? '#a7d8ff': null)
+                  )}
+                 </div>;
             })}
             </div>
         })

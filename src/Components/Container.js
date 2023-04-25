@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import Puzzle from "./puzzleBox";
 import Questions from "./questions";
+import CreateIcon from '@mui/icons-material/Create';
 
 
 
@@ -18,6 +19,8 @@ function ContainerComponent(props) {
         position: 'row',
         cell: 0
     });
+
+    const [mutedText, setMutedText] = useState(false);
 
     const [questions, setQuestions] = useState({
         across: [{selected: true, label: '1A', text: 'Ingredient in a California roll'},
@@ -141,10 +144,21 @@ function ContainerComponent(props) {
         })
     }
 
+    const handlePenClick = (e) => {
+      setMutedText(!mutedText)
+    }
+
     return (
         <div className="container">
         <div className="header">
             <p className="heading-title">The Mini Crossword</p>
+        </div>
+        <div className="Actions">
+            {mutedText ? <div className="pen-container" onClick={(e) => handlePenClick(e)} style={{background:  '#4aaefe'}}>
+            <CreateIcon style={{color:'white' }}/>
+          </div>:<div className="pen-container" onClick={(e) => handlePenClick(e)}>
+            <CreateIcon style={{color: '#4aaefe'}}/>
+          </div>}
         </div>
          <div style={{display: 'flex', flexWrap: 'wrap'}}>
           <div style={{display: 'flex', flexDirection: 'column' ,marginLeft: 13}}>
@@ -153,7 +167,8 @@ function ContainerComponent(props) {
             <p style={{fontSize: 16}}>{selectedQuestion.text}</p>
         </div>
            <Puzzle inputs={inputs} setInputs={setInputs} highlight={highlight} setHighlight={setHighlight}
-           questions={questions} setQuestions={setQuestions} setSelectedQuestion={setSelectedQuestion}/>      
+           questions={questions} setQuestions={setQuestions} setSelectedQuestion={setSelectedQuestion}
+           mutedText={mutedText}/>      
            </div>           
            <div  style={{display: 'flex', flexDirection: 'column', alignItems:'center'}}>
             <Questions questions={questions} setQuestions={setQuestions} 
