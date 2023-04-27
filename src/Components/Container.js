@@ -2,6 +2,10 @@ import React, {useState, useEffect} from "react";
 import Puzzle from "./puzzleBox";
 import Questions from "./questions";
 import CreateIcon from '@mui/icons-material/Create';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import Keyboard from 'react-simple-keyboard';
+import 'react-simple-keyboard/build/css/index.css';
 
 
 
@@ -21,6 +25,7 @@ function ContainerComponent(props) {
     });
 
     const [mutedText, setMutedText] = useState(false);
+    const [keyboardType, setKeyboardType] = useState('default');
 
     const [questions, setQuestions] = useState({
         across: [{selected: true, label: '1A', text: 'Ingredient in a California roll'},
@@ -148,11 +153,94 @@ function ContainerComponent(props) {
       setMutedText(!mutedText)
     }
 
+    const handleMobileQues = (e,type) => {
+      let current = selectedQuestion.label;
+      let clone = JSON.parse(JSON.stringify(questions));
+      let nextQues, newPos, newCell, newText;
+      if(type === 'right') {
+        if(current.indexOf('A') !== -1){
+            nextQues = current === '1A' ? '5A' : current === '8A' ? '1D' : `${Number(current.charAt(0))+1}A`
+        }
+        else {
+            nextQues = current === '5D' ? '1A' : `${Number(current.charAt(0))+1}D`;
+        }
+      }
+      else {
+        if(current.indexOf('A') !== -1){
+            nextQues = current === '1A' ? '5D' : current === '5A' ? '1A' : `${Number(current.charAt(0))-1}A`
+        }
+        else {
+            nextQues = current === '1D' ? '8A' : `${Number(current.charAt(0))-1}D`;
+        }
+      }
+      for(let i =0 ; i<clone.across.length; i++){
+        if(clone.across[i].selected) clone.across[i].selected = false
+        if(clone.across[i].label === nextQues) {
+            clone.across[i].selected = true;
+            newText = clone.across[i].text
+            newPos = 'row'
+            newCell = i
+        }
+    } 
+    for(let i =0 ; i<clone.down.length; i++){
+        if(clone.down[i].selected) clone.down[i].selected = false
+        if(clone.down[i].label === nextQues) {
+            clone.down[i].selected = true;
+            newText = clone.across[i].text
+            newPos = 'column'
+            newCell = nextQues.split('')[0] === '5' ? 0 : Number(nextQues.split('')[0])
+        }
+    }
+
+    setQuestions(clone);
+    setSelectedQuestion({
+        label: nextQues,
+        text: newText
+    })
+    setHighlight({
+        position: newPos,
+        cell: newCell
+    });
+
+    let inputsClone = JSON.parse(JSON.stringify(inputs));
+
+    for(let i = 0; i<inputsClone.length; i++) {
+        for(let j = 0; j<inputsClone[0].length; j++) {
+            if(inputsClone[i][j].selected){
+                inputsClone[i][j].selected = false;
+            }
+            if(newPos === 'row' && newCell === i) {
+                if(i === 0) {
+                    inputsClone[i][1].selected = true;  
+                }
+                else inputsClone[i][0].selected = true;
+            }
+            else if(newPos === 'column' && newCell === j){
+                if(j === 0) {
+                    inputsClone[1][j].selected = true; 
+                }
+                inputsClone[0][j].selected = true;
+            }
+        }
+    }
+    setInputs(inputsClone)
+
+    }
+
+    const handleKeyboardTypeChange = (button) => {
+        if(button === '{numbers}'){
+            setKeyboardType('numbers')
+        }
+        else if(button === '{default}'){
+            setKeyboardType('default')
+        }
+    }
+
     return (
         <div className="container">
-        <div className="header">
+
             <p className="heading-title">The Mini Crossword</p>
-        </div>
+
         <div className="Actions">
             {mutedText ? <div className="pen-container" onClick={(e) => handlePenClick(e)} style={{background:  '#4aaefe'}}>
             <CreateIcon style={{color:'white' }}/>
@@ -160,7 +248,7 @@ function ContainerComponent(props) {
             <CreateIcon style={{color: '#4aaefe'}}/>
           </div>}
         </div>
-         <div style={{display: 'flex', flexWrap: 'wrap'}}>
+         <div className="lower-box">
           <div style={{display: 'flex', flexDirection: 'column' ,marginLeft: 13}}>
         <div className="current-question">
             <p style={{fontSize:16,fontWeight: 'bold', width: 40}}>{selectedQuestion.label}</p>
@@ -168,9 +256,53 @@ function ContainerComponent(props) {
         </div>
            <Puzzle inputs={inputs} setInputs={setInputs} highlight={highlight} setHighlight={setHighlight}
            questions={questions} setQuestions={setQuestions} setSelectedQuestion={setSelectedQuestion}
-           mutedText={mutedText}/>      
+           mutedText={mutedText}/> 
+        <div className="mobile-container">
+        <div className="current-question-mobile">
+            <KeyboardArrowLeftIcon style={{cursor: 'pointer'}} onClick={(e)=>handleMobileQues(e,'right')}/>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+            <p style={{fontSize:16,fontWeight: 'bold', width: 40}}>{selectedQuestion.label}</p>
+            <p style={{fontSize: 16}}>{selectedQuestion.text}</p>
+            </div>        
+            <ChevronRightIcon  style={{cursor: 'pointer'}} onClick={(e)=>handleMobileQues(e,'right')}/>
+        </div>
+        <div className='keyboard'> 
+          <Keyboard theme={"hg-theme-default hg-layout-default myTheme"}
+           layoutName={keyboardType}
+           onKeyPress={button => handleKeyboardTypeChange(button)}
+           layout={{
+            default: [
+                "Q W E R T Y U I O P",
+                "A S D F G H J K L",
+             "{numbers} Z X C V B N M {backspace}"
+            ],
+            numbers: ["1 2 3", "4 5 6", "7 8 9", "{default} 0 {backspace}"]
+            }}
+            display={
+                {
+                    "{numbers}": "123",
+                    "{default}":'ABC',
+                    "{ent}": "return",
+                    "{escape}": "esc ⎋",
+                    "{tab}": "tab ⇥",
+                    "{backspace}": "⌫",
+                    "{capslock}": "caps lock ⇪",
+                    "{shift}": "⇧",
+                    "{controlleft}": "ctrl ⌃",
+                    "{controlright}": "ctrl ⌃",
+                    "{altleft}": "alt ⌥",
+                    "{altright}": "alt ⌥",
+                    "{metaleft}": "cmd ⌘",
+                    "{metaright}": "cmd ⌘",
+                    "{abc}": "ABC"
+                    
+                }
+            }
+             />
+        </div>   
+        </div> 
            </div>           
-           <div  style={{display: 'flex', flexDirection: 'column', alignItems:'center'}}>
+           <div className="desktop-ques" >
             <Questions questions={questions} setQuestions={setQuestions} 
             inputs={inputs} setInputs={setInputs}
             setHighlight={setHighlight} setSelectedQuestion={setSelectedQuestion}/>

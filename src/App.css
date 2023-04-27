@@ -37,14 +37,19 @@
   }
 }
 
-
 .cellInput {
   color: black;
   font-size: 30px;
-  width: 70px;
+  max-width: 70px;
   height: 70px;
   border: 0.5px solid black;
   text-align: center;
+}
+
+.muted-cell {
+  height: 73px; 
+  width: 75px; 
+  background: black;
 }
 
 .cellInput::placeholder{
@@ -61,14 +66,33 @@
   outline: none;
 }
 
+
+.cell-container {
+  width: fit-content;
+  height: fit-content;
+}
+
+.cell-container::after{
+  content: "";
+  position: absolute;
+  border-top: 1px solid red;
+  width: 106px;
+  transform: rotate(135deg);
+  transform-origin: 0% 0%;
+}
+
 .container {
-  width: 100%;
+  max-width: 1000px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: start;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.lower-box{
+  display: flex;
 }
 
 .header {
@@ -76,11 +100,14 @@
 }
 
 .heading-title {
-  display: inline-block;
-  font-family: nyt-karnakcondensed,Georgia;
-  font-weight: 700;
-  margin-right: 16px;
-  font-size: 42px;
+    font-size: 42px;
+    line-height: 54.6px;
+    display: inline-block;
+    font-family: nyt-karnakcondensed,Georgia;
+    text-align: start;
+    margin-left: 30px;
+    font-weight: 700;
+    margin-right: 16px;
 }
 
 .heading-subtitle {
@@ -112,12 +139,15 @@
   font-weight: bold;
   line-height: 2;
   text-align: start;
+  font-size: 16px;
+  margin: 0px;
 }
 
+
 .question-list {
-  height: calc(100% - 40px);
   overflow-y: scroll;
   padding-left: 0px;
+  margin: 0px;
 }
 
 .list-element{
@@ -133,13 +163,16 @@
     min-width: 24px;
     width: 24px;
     line-height: 1.4;
+    font-size: 16px;
 }
+
 
 .el-text {
   margin-left: 5px;
   margin-right: 5px;
   line-height: 1.4;
   text-align: start;
+  font-size: 16px;
 }
 
 .list-container{
@@ -181,3 +214,34 @@
 .pen-container:hover {
   background-color: #e6e6e6;
 }
+
+  @media screen and (max-width: 576px) {
+    .mobile-container{
+      display: block !important;
+    }
+    .desktop-ques{
+      display: none !important;
+    }
+  }
+
+  .mobile-container{
+    display: none;
+    flex-direction: column;
+  }
+
+  .current-question-mobile {
+     background: #a7d8ff;
+     display: flex;
+     flex-direction: row;
+     justify-content: space-between;
+     align-items: center;
+     font-size: 16px;
+     margin-top: 10px;
+     min-height: 40px;
+  }
+
+  .desktop-ques {
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+  }

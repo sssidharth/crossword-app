@@ -180,7 +180,7 @@ function Puzzle(props) {
             placeholderNumber = position[0]+4
         }
         return muted ? (
-            <div style={{height: 73, width: 75, background: 'black'}}>
+            <div className="muted-cell" >
             </div>
         ):(
           <input type="text" id={`${position[0]}${position[1]}`} onClick={(e) => handleClick(e,position)}
@@ -203,8 +203,8 @@ function Puzzle(props) {
                 else {
                     cellsToHighlight = [index1, props.highlight.cell]
                 }
-                return (index1 === 0 && index2 === 0) || (index2 === 4 && index1 === 4) ? <div key={index2}>{renderBox(true, '', 'black',[index1,index2])} </div>
-                : <div key={index2}>{renderBox(false, val2.value, val2.selected,[index1,index2], 
+                return (index1 === 0 && index2 === 0) || (index2 === 4 && index1 === 4) ? <div className="cell-container" key={index2}>{renderBox(true, '', 'black',[index1,index2])} </div>
+                : <div className="cell-container" key={index2}>{renderBox(false, val2.value, val2.selected,[index1,index2], 
                  (cellsToHighlight[0] === index1 && cellsToHighlight[1] === index2 ? '#a7d8ff': null)
                   )}
                  </div>;
@@ -214,7 +214,7 @@ function Puzzle(props) {
      }
 
      return (
-        <div style={{width: 'fit-content', height: 'fit-content', border: '2px soild'}}>
+        <div >
            {renderAllBoxes()}
         </div>
      )
