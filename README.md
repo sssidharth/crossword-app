@@ -14,3 +14,4 @@
 
 ## Packages 
   - @mui/icons-material @mui/material @emotion/styled @emotion/react
+  - react-simple-keyboard : For mobile layout keyboard design

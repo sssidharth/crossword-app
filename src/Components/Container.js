@@ -26,6 +26,7 @@ function ContainerComponent(props) {
 
     const [mutedText, setMutedText] = useState(false);
     const [keyboardType, setKeyboardType] = useState('default');
+    const [check, setCheck] = useState(true);
 
     const [questions, setQuestions] = useState({
         across: [{selected: true, label: '1A', text: 'Ingredient in a California roll'},
@@ -53,10 +54,11 @@ function ContainerComponent(props) {
 
         for(let i = 0; i<ip.length; i++) {
             for(let j = 0; j<ip[0].length; j++) {
+                let word = answers.across[j].split('');
                 if(i === 0 && j === 1){
                     ip[i][j] = {
                        selected: true,
-                       value: ''
+                       value: '',
                     }
                 }
                 else {
@@ -65,6 +67,18 @@ function ContainerComponent(props) {
                         value: ''
                      } 
                 }
+                if(i === 0) {
+                    if(j === 0) ip[i][j].expected = ''                   
+                    else ip[i][j].expected = word[j-1]
+                }
+                else if( i === 4) {
+                    if(j === 4) ip[i][j].expected = ''                   
+                    else ip[i][j].expected = word[j]
+                }
+                else {
+                    ip[i][j].expected = word[j]
+                }
+               
             }
         }
        
@@ -228,12 +242,125 @@ function ContainerComponent(props) {
     }
 
     const handleKeyboardTypeChange = (button) => {
+        let values = JSON.parse(JSON.stringify(inputs));
         if(button === '{numbers}'){
             setKeyboardType('numbers')
         }
         else if(button === '{default}'){
             setKeyboardType('default')
         }
+        else {
+            let selectedEl;
+            for(let i = 0; i<values.length; i++) {
+                let found = false;
+                for(let j = 0; j<values[0].length; j++) {
+                    if(values[i][j].selected){
+                        values[i][j].value = button === '{backspace}'? '' : button
+                        values[i][j].selected = false;
+                        found = true;
+                        selectedEl = `${i}${j}`;
+                        break;
+                    }
+                }
+                if(found) break;
+            }
+            if(button === '{backspace}') {
+                let currentEl = document.getElementById(selectedEl);
+                currentEl.style.color = props.mutedText ? '#959595' :'black'
+                if(inputs[selectedEl.charAt(0)][selectedEl.charAt(0)].value === '') {
+                    let current = selectedEl
+                    current = current.split('')
+                    let row = Number(current[0]);
+                    let col = Number(current[1]);
+                    let nextElNumber = ''
+                    let highlightCell = highlight.cell
+                    if(highlight.position === 'row'){
+                       if((col-1)<0){
+                         nextElNumber = `${row-1}${4}`
+                         highlightCell = row-1;
+                       }
+                       else {
+                        nextElNumber =`${row}${col-1}`
+                       }
+                       if(col === 1 && row === 0) {
+                        nextElNumber = '43';
+                        highlightCell = 4
+                       }
+                      
+                    }
+                    else {
+                        if((row-1)<0){
+                            nextElNumber = `${4}${col-1}`
+                            highlightCell = col-1
+                          }
+                          else {
+                           nextElNumber =`${row-1}${col}`
+                          }
+                          if(col === 0 && row === 1) {
+                            nextElNumber = '34';
+                            highlightCell = 4
+                           }
+                         
+                    }
+                    values[Number(nextElNumber.split('')[0])][Number(nextElNumber.split('')[1])].selected = true;
+                    let nextEl = document.getElementById(nextElNumber);
+                    nextEl.focus();
+                    nextEl.setSelectionRange(1,1)
+                    setHighlight({
+                    position: highlight.position,
+                    cell: highlightCell
+                })
+                }
+            }
+            else {
+                    selectedEl = selectedEl.split('')
+                    let row = Number(selectedEl[0]);
+                    let col = Number(selectedEl[1]);
+                    let nextElNumber = ''
+                    let highlightCell = highlight.cell
+                    if(highlight.position === 'row'){
+                       if((col+1)>4){
+                         nextElNumber = `${row+1}${0}`
+                         highlightCell = row+1;
+                       }
+                       else {
+                        nextElNumber =`${row}${col+1}`
+                       }
+                       if(col === 3 && row === 4){
+                        nextElNumber = '01';
+                        highlightCell = 0
+                       } 
+                      
+                    }
+                    else {
+                        if((row+1)>4){
+                            nextElNumber = `${0}${col+1}`
+                            highlightCell = col+1
+                          }
+                          else {
+                           nextElNumber =`${row+1}${col}`
+                          }
+                          if(col === 4 && row === 3) {
+                            nextElNumber = '01';
+                            highlightCell = 1
+                          }
+                         
+                    }
+                    values[Number(nextElNumber.charAt(0))][Number(nextElNumber.charAt(1))].selected = true;
+                    let nextEl = document.getElementById(nextElNumber);
+                    nextEl.focus();
+                    nextEl.setSelectionRange(1,1)
+                   setHighlight({
+                    position: highlight.position,
+                    cell: highlightCell
+                })
+            }
+        }
+        setInputs(values);
+    }
+
+    const handleCheck = (e) => {
+        setCheck(!check);
     }
 
     return (
@@ -247,16 +374,19 @@ function ContainerComponent(props) {
           </div>:<div className="pen-container" onClick={(e) => handlePenClick(e)}>
             <CreateIcon style={{color: '#4aaefe'}}/>
           </div>}
+          <div style={{background: check? 'black' : 'none', color: check ? 'white': '#4c4c4c'}} className="desktop-check" onClick={(e) => handleCheck(e)}>
+            Check
+          </div>
         </div>
          <div className="lower-box">
-          <div style={{display: 'flex', flexDirection: 'column' ,marginLeft: 13}}>
+          <div style={{display: 'flex', flexDirection: 'column' }}>
         <div className="current-question">
             <p style={{fontSize:16,fontWeight: 'bold', width: 40}}>{selectedQuestion.label}</p>
             <p style={{fontSize: 16}}>{selectedQuestion.text}</p>
         </div>
            <Puzzle inputs={inputs} setInputs={setInputs} highlight={highlight} setHighlight={setHighlight}
            questions={questions} setQuestions={setQuestions} setSelectedQuestion={setSelectedQuestion}
-           mutedText={mutedText}/> 
+           mutedText={mutedText} check={check}/> 
         <div className="mobile-container">
         <div className="current-question-mobile">
             <KeyboardArrowLeftIcon style={{cursor: 'pointer'}} onClick={(e)=>handleMobileQues(e,'right')}/>
@@ -299,7 +429,14 @@ function ContainerComponent(props) {
                 }
             }
              />
-        </div>   
+        </div>
+        <div className="mobile-actions">
+            <div className="mobile-action-buttons" 
+            style={{background: check ? 'black' : '#c9c9c9', color: check ? 'white': '#4c4c4c'}}
+            onClick={(e) => handleCheck(e)}>Check</div>
+            <div style={{background: mutedText ? 'black' : '#c9c9c9'}} className="mobile-action-buttons" onClick={(e) => handlePenClick(e)}>
+            <CreateIcon style={{color: mutedText ? 'white' : 'none'}}/></div>
+        </div>
         </div> 
            </div>           
            <div className="desktop-ques" >

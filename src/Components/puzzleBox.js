@@ -171,6 +171,71 @@ function Puzzle(props) {
         props.setInputs(clone);
     }
 
+    const handleKeyDown = (e, position) => {
+        if(e.key === 'Backspace') {
+            let clone = JSON.parse(JSON.stringify(props.inputs));
+        for(let i = 0;i <clone.length; i++) {
+            let found = false;
+            for(let j = 0; j<clone[0].length; j++){
+               if(i === position[0] && j === position[1]){
+                    if(clone[i][j].value !==''){
+                        clone[i][j].value = '' 
+                    }
+                    else clone[i][j].selected = false;        
+                    found = true;
+                    break;              
+               }
+            }
+            if(found) break;
+        }
+        if(props.inputs[position[0]][position[1]].value === '') {
+            let current = e.target.id;
+            current = current.split('')
+            let row = Number(current[0]);
+            let col = Number(current[1]);
+            let nextElNumber = ''
+            let highlightCell = props.highlight.cell
+            if(props.highlight.position === 'row'){
+               if((col-1)<0){
+                 nextElNumber = `${row-1}${4}`
+                 highlightCell = row-1;
+               }
+               else {
+                nextElNumber =`${row}${col-1}`
+               }
+               if(col === 1 && row === 0) {
+                nextElNumber = '43';
+                highlightCell = 4
+               }
+              
+            }
+            else {
+                if((row-1)<0){
+                    nextElNumber = `${4}${col-1}`
+                    highlightCell = col-1
+                  }
+                  else {
+                   nextElNumber =`${row-1}${col}`
+                  }
+                  if(col === 0 && row === 1) {
+                    nextElNumber = '34';
+                    highlightCell = 4
+                   }
+                 
+            }
+            clone[Number(nextElNumber.split('')[0])][Number(nextElNumber.split('')[1])].selected = true;
+            let nextEl = document.getElementById(nextElNumber);
+            nextEl.focus();
+            nextEl.setSelectionRange(1,1)
+        props.setHighlight({
+            position: props.highlight.position,
+            cell: highlightCell
+        })
+        }
+        props.setInputs(clone);
+        }
+    }
+
     const renderBox = (muted, value, selected, position, background) => {
         let placeholderNumber = null;
         if(position[0] === 0 ){
@@ -185,6 +250,7 @@ function Puzzle(props) {
         ):(
           <input type="text" id={`${position[0]}${position[1]}`} onClick={(e) => handleClick(e,position)}
           className="cellInput" maxLength={1} value={value} onChange={(e)=>handleChange(e, position)}
+          onKeyDown={(e) => handleKeyDown(e, position)}
           placeholder={placeholderNumber ? `${placeholderNumber}` : null}
         //  onKeyDown={(e) => handleKeyDown(e,position)}
           style={{background: selected ? '#ffda00' : !selected && background ? background : 'white' }}>
@@ -203,11 +269,16 @@ function Puzzle(props) {
                 else {
                     cellsToHighlight = [index1, props.highlight.cell]
                 }
-                return (index1 === 0 && index2 === 0) || (index2 === 4 && index1 === 4) ? <div className="cell-container" key={index2}>{renderBox(true, '', 'black',[index1,index2])} </div>
-                : <div className="cell-container" key={index2}>{renderBox(false, val2.value, val2.selected,[index1,index2], 
+                return (index1 === 0 && index2 === 0) || (index2 === 4 && index1 === 4) ? <div className="cell-container-muted" key={index2}>{renderBox(true, '', 'black',[index1,index2])} </div>
+                :(props.check && val2.value !== '' && val2.value !== val2.expected)? <div className="cell-container" key={index2}>
+                {renderBox(false, val2.value, val2.selected,[index1,index2], 
+                (cellsToHighlight[0] === index1 && cellsToHighlight[1] === index2 ? '#a7d8ff': null)
+                 )}
+                </div>:<div className="cell-container-nocheck" key={index2}>
+                 {renderBox(false, val2.value, val2.selected,[index1,index2], 
                  (cellsToHighlight[0] === index1 && cellsToHighlight[1] === index2 ? '#a7d8ff': null)
                   )}
-                 </div>;
+                 </div>
             })}
             </div>
         })
