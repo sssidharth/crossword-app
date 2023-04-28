@@ -10,7 +10,11 @@
   - question highlight based on highlighted row/column
   - row/column highlighted based on selected question
   - Pen feature: to switch between pen and pencil mode
+  - Check feature crosses out the incorrect cells
   - Submit and reset buttons
+  - Backspace clears the current cell and goes to previous one
+  - On App.js added a simple GET API call
+  - Mobile view can be switched by using console (mobile width at 400px-576px)
 
 ## Packages 
   - @mui/icons-material @mui/material @emotion/styled @emotion/react

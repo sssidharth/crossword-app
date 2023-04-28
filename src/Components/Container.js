@@ -26,7 +26,7 @@ function ContainerComponent(props) {
 
     const [mutedText, setMutedText] = useState(false);
     const [keyboardType, setKeyboardType] = useState('default');
-    const [check, setCheck] = useState(true);
+    const [check, setCheck] = useState(false);
 
     const [questions, setQuestions] = useState({
         across: [{selected: true, label: '1A', text: 'Ingredient in a California roll'},
