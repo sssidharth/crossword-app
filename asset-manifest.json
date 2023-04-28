@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/crossword-app/static/css/main.7eb2f784.css",
-    "main.js": "/crossword-app/static/js/main.219c17b6.js",
+    "main.js": "/crossword-app/static/js/main.17a10ae3.js",
     "static/js/787.75195208.chunk.js": "/crossword-app/static/js/787.75195208.chunk.js",
     "static/media/logo.svg": "/crossword-app/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "/crossword-app/index.html",
     "main.7eb2f784.css.map": "/crossword-app/static/css/main.7eb2f784.css.map",
-    "main.219c17b6.js.map": "/crossword-app/static/js/main.219c17b6.js.map",
+    "main.17a10ae3.js.map": "/crossword-app/static/js/main.17a10ae3.js.map",
     "787.75195208.chunk.js.map": "/crossword-app/static/js/787.75195208.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.7eb2f784.css",
-    "static/js/main.219c17b6.js"
+    "static/js/main.17a10ae3.js"
   ]
 }
