@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 
 function Puzzle(props) {
+    
 
     useEffect(()=> {
         let cellstoChange = []      
@@ -18,6 +19,8 @@ function Puzzle(props) {
             if(el) el.style.color = props.mutedText ? '#959595' : 'black'          
         }
     },[props.mutedText])
+
+
     
     const handleClick = (e,position) => {
 
@@ -172,6 +175,10 @@ function Puzzle(props) {
     }
 
     const handleKeyDown = (e, position) => {
+        if(props.keyboradVisible<=400){
+            e.preventDefault();
+        }
+        else {
         if(e.key === 'Backspace') {
             let clone = JSON.parse(JSON.stringify(props.inputs));
         for(let i = 0;i <clone.length; i++) {
@@ -234,6 +241,7 @@ function Puzzle(props) {
         }
         props.setInputs(clone);
         }
+      }
     }
 
     const renderBox = (muted, value, selected, position, background) => {

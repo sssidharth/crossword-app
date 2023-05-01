@@ -15,6 +15,7 @@ const answers = {
 }
 function ContainerComponent(props) {
     const [inputs, setInputs] = useState([]);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const [entered, setEntered] = useState({
         across: ['', '', '', '', ''],
         down: ['', '', '', '', '']
@@ -83,6 +84,15 @@ function ContainerComponent(props) {
         }
        
         setInputs(ip);
+        const handleWindowResize = () => {
+            setWindowWidth(window.innerWidth);
+          };
+      
+          window.addEventListener('resize', handleWindowResize);
+      
+          return () => {
+            window.removeEventListener('resize', handleWindowResize);
+          };
     }, []);
 
     useEffect(() => {
@@ -267,7 +277,7 @@ function ContainerComponent(props) {
             if(button === '{backspace}') {
                 let currentEl = document.getElementById(selectedEl);
                 currentEl.style.color = props.mutedText ? '#959595' :'black'
-                if(inputs[selectedEl.charAt(0)][selectedEl.charAt(0)].value === '') {
+               
                     let current = selectedEl
                     current = current.split('')
                     let row = Number(current[0]);
@@ -310,7 +320,7 @@ function ContainerComponent(props) {
                     position: highlight.position,
                     cell: highlightCell
                 })
-                }
+                
             }
             else {
                     selectedEl = selectedEl.split('')
@@ -386,7 +396,7 @@ function ContainerComponent(props) {
         </div>
            <Puzzle inputs={inputs} setInputs={setInputs} highlight={highlight} setHighlight={setHighlight}
            questions={questions} setQuestions={setQuestions} setSelectedQuestion={setSelectedQuestion}
-           mutedText={mutedText} check={check}/> 
+           mutedText={mutedText} check={check} keyboradVisible={windowWidth}/> 
         <div className="mobile-container">
         <div className="current-question-mobile">
             <KeyboardArrowLeftIcon style={{cursor: 'pointer'}} onClick={(e)=>handleMobileQues(e,'right')}/>
